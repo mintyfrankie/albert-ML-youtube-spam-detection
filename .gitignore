@@ -12,3 +12,4 @@ wheels/
 # misc
 **/.DS_Store
 .vscode/
+.env
