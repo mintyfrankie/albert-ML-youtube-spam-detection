@@ -1,6 +1,7 @@
 # python generated files
 __pycache__/
 .pytest_cache/
+.ruff_cache/
 *.py[oc]
 build/
 dist/
