@@ -28,6 +28,8 @@ class TestApp:
         """
         Tests the detect_text endpoint of the FastAPI application.
         """
+
+        # TODO: implement the test
         response = client.post("/detect_text")
         assert response.status_code == 501
         assert response.json() == {"detail": "Not implemented yet"}
@@ -36,6 +38,8 @@ class TestApp:
         """
         Tests the process_page endpoint of the FastAPI application.
         """
+
+        # TODO: implement the test
         response = client.post("/process_page")
         assert response.status_code == 501
         assert response.json() == {"detail": "Not implemented yet"}
