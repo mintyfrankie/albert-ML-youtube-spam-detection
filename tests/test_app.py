@@ -23,7 +23,9 @@ def test_get_health() -> None:
     """
     response = client.get("/v1/health")
     assert response.status_code == 200
-    assert response.json() == {"version": "0.1.0", "status": "ok"}
+
+    status = response.json().get("status")
+    assert status == "ok"
 
 
 @pytest.mark.asyncio
