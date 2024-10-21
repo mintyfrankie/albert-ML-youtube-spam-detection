@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Get Python version
+      id: python-version
+      run: echo "version=$(cat .python-version)" >> $GITHUB_OUTPUT
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ steps.python-version.outputs.version }}
+    
+    - name: Set up Rye
+      id: setup-rye
+      uses: eifinger/setup-rye@v4
+      with:
+        enable-cache: true
+        cache-prefix: 'optional-prefix'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install dependencies
+      run: rye sync
+
+    - name: Run lint
+      run: rye lint
+
+    - name: Run tests
+      run: rye test
