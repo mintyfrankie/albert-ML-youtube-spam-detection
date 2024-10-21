@@ -12,7 +12,6 @@ from spam_detector.app import app
 from spam_detector.interfaces import DetectRequestPayload, DetectResponse, VideoResponse
 
 if TYPE_CHECKING:
-    from _pytest.monkeypatch import MonkeyPatch
     from pytest_mock import MockerFixture
 
 client = TestClient(app)
