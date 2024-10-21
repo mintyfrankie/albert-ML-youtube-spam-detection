@@ -1,0 +1,64 @@
+name: Deploy to GHCR
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Python version
+        id: python-version
+        run: echo "version=$(cat .python-version)" >> $GITHUB_OUTPUT
+    
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ steps.python-version.outputs.version }}
+      
+      - name: Set up Rye
+        id: setup-rye
+        uses: eifinger/setup-rye@v4
+        with:
+          enable-cache: true
+          cache-prefix: 'optional-prefix'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: rye sync
+
+      - name: Build
+        run: rye build --wheel --clean
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+
+      - name: Login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+      
