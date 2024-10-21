@@ -7,3 +7,4 @@ COPY src/spam_detector/app.py /app/entrypoint.py
 WORKDIR /app
 
 CMD ["sh", "-c", "fastapi run entrypoint.py --port $PORT"]
+
