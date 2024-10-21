@@ -6,4 +6,4 @@ RUN --mount=source=dist,target=/dist uv pip install --no-cache --system /dist/*.
 COPY src/spam_detector/app.py /app/entrypoint.py
 WORKDIR /app
 
-CMD ["fastapi", "run", "entrypoint.py", "--port", "3000"]
+CMD ["fastapi", "run", "entrypoint.py", "--port", "$PORT"]
