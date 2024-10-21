@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+
 from spam_detector.app import app
 
 
