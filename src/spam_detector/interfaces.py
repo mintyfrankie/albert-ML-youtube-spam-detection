@@ -2,6 +2,7 @@
 Contains the interfaces for API requests and responses.
 """
 
+from typing import List
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -27,6 +28,9 @@ class DetectResponse(BaseModel):
     uuid: UUID = Field(..., description="Unique identifier of the comment")
     is_spam: bool = Field(..., description="Whether the comment is spam or not")
 
+    class Config:
+        json_encoders = {UUID: str}
+
 
 class VideoRequestPayload(BaseModel):
     """Request model for video comment processing."""
@@ -40,6 +44,9 @@ class VideoResponse(BaseModel):
 
     id: str = Field(..., description="YouTube video ID")
     nb: int = Field(..., description="Number of comments processed")
-    comments: list[DetectResponse] = Field(
+    comments: List[DetectResponse] = Field(
         ..., description="List of comment detections"
     )
+
+    class Config:
+        json_encoders = {UUID: str}

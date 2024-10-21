@@ -223,6 +223,10 @@ pygments==2.18.0
 pyparsing==3.2.0
     # via matplotlib
 pytest==8.3.3
+    # via pytest-asyncio
+    # via pytest-mock
+pytest-asyncio==0.24.0
+pytest-mock==3.14.0
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via matplotlib
