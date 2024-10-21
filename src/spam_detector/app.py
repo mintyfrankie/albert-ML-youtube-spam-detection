@@ -17,7 +17,7 @@ from spam_detector.services import detect_spam, get_youtube_comments
 
 app = FastAPI()
 
-APP_VERSION = "0.1.0"
+APP_VERSION = "0.0.2"
 
 
 @app.get("/v1/health", response_model=HealthResponse)
