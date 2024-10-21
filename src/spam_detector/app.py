@@ -11,6 +11,7 @@ from spam_detector.interfaces import (
     DetectResponse,
     HealthResponse,
 )
+from spam_detector.services import get_youtube_comments
 
 app = FastAPI()
 
@@ -52,15 +53,22 @@ def detect_text(payload: DetectRequestPayload) -> DetectResponse:
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@app.post("/process_page")
-def process_page():
+@app.get("/v1/process_page/{video_id}")
+def process_page(video_id: str):
     """
     Given a YouTube video ID, get first 100 comments and return the detection
     results in batch.
     """
 
-    # TODO: add error handling logic
-    # TODO: implement the page processing logic
-    # Should we use query parameters instead of a request payload?
+    try:
+        comments = get_youtube_comments(video_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
-    raise NotImplementedError("Not implemented yet")
+    results: list[DetectResponse] = []
+    for comment in comments:
+        uuid = UUID(int=0)
+        is_spam = detect_text(DetectRequestPayload(uuid=uuid, content=comment)).is_spam
+        results.append(DetectResponse(uuid=uuid, is_spam=is_spam))
+
+    return results
