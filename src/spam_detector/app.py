@@ -61,7 +61,6 @@ async def detect_text(payload: DetectRequestPayload) -> DetectResponse:
         HTTPException: If there's an error processing the request.
     """
     try:
-        # FIXME: should generate a random UUID
         uuid = payload.uuid or uuid4()
 
         if not payload.content.strip():
