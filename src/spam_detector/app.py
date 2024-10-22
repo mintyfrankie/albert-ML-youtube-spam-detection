@@ -2,11 +2,13 @@
 The entrypoint for the FastAPI application.
 """
 
+from pathlib import Path
 from typing import List
-from uuid import UUID
+from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from joblib import load
 
 from spam_detector.interfaces import (
     DetectRequestPayload,
@@ -16,9 +18,12 @@ from spam_detector.interfaces import (
 )
 from spam_detector.services import detect_spam, get_youtube_comments
 
+MODEL_PATH = Path(__file__).parent / "models" / "model.joblib"
+model = load(MODEL_PATH)
+
 app = FastAPI()
 
-# Add CORS middleware
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
@@ -57,12 +62,12 @@ async def detect_text(payload: DetectRequestPayload) -> DetectResponse:
     """
     try:
         # FIXME: should generate a random UUID
-        uuid = payload.uuid or UUID(int=0)
+        uuid = payload.uuid or uuid4()
 
         if not payload.content.strip():
             raise ValueError("Content field is required and cannot be empty")
 
-        is_spam = await detect_spam(payload.content)
+        is_spam = await detect_spam(model, payload.content)
         return DetectResponse(uuid=uuid, is_spam=is_spam)
 
     except ValueError as ve:
@@ -96,8 +101,8 @@ async def process_page(
         results: List[DetectResponse] = []
 
         for comment in comments:
-            uuid = UUID(int=0)
-            is_spam = await detect_spam(comment)
+            uuid = uuid4()
+            is_spam = await detect_spam(model, comment)
             results.append(DetectResponse(uuid=uuid, is_spam=is_spam))
 
         return VideoResponse(id=video_id, nb=len(results), comments=results)

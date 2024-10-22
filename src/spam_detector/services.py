@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 import requests
 from dotenv import load_dotenv
@@ -10,7 +9,7 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_DATA_API_KEY")
 BASE_URL = "https://www.googleapis.com/youtube/v3/commentThreads"
 
 
-async def get_youtube_comments(video_id: str, max_results: int = 50) -> List[str]:
+async def get_youtube_comments(video_id: str, max_results: int = 50) -> list[str]:
     """
     Get comments from a YouTube video.
 
@@ -44,7 +43,7 @@ async def get_youtube_comments(video_id: str, max_results: int = 50) -> List[str
         raise Exception(f"Error fetching YouTube comments: {str(e)}")
 
 
-async def detect_spam(content: str) -> bool:
+async def detect_spam(model, content: str) -> bool:
     """
     Detect if a comment is spam.
 
@@ -54,5 +53,7 @@ async def detect_spam(content: str) -> bool:
     Returns:
         bool: True if the comment is spam, False otherwise.
     """
-    # TODO: Implement spam detection logic
-    return len(content) > 100  # Example: consider long comments as spam
+
+    THRESHOLD = 0.5
+    prob = model.predict_proba([content])[0][1]
+    return prob > THRESHOLD
