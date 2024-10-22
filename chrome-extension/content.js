@@ -1,23 +1,51 @@
 /**
- * Generates a random spam probability.
- * @returns {number} A random number between 0 and 1.
+ * Sends a comment to the spam detection endpoint and returns a classification.
+ * @param {string} commentBody - The text content of the comment.
+ * @returns {Promise<boolean>} A promise that resolves to true if classified as spam, false otherwise.
  */
-function getRandomSpamProbability() {
-    return Math.random();
+async function getSpamClassification(commentBody) {
+    const endpoint = 'http://localhost:8000/v1/detect'; 
+    // const endpoint = 'https://stormy-lowlands-61087-f9957486f73b.herokuapp.com/v1/detect'; 
+    // TODO: change this to the actual endpoint
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content: commentBody,
+                uuid: crypto.randomUUID(),
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.is_spam;
+
+    } catch (error) {
+        console.error('Error calling spam detection API:', error);
+        // In case of an error, we'll assume it's not spam
+        return false;
+    }
 }
 
 /**
  * Creates and inserts a spam info pill element into a comment.
  * @param {HTMLElement} commentElement - The comment element to insert the pill into.
- * @param {number} probability - The spam probability value.
+ * @param {boolean} isSpam - Whether the comment is classified as spam.
  */
-function insertSpamInfoPill(commentElement, probability) {
-    if (commentElement.querySelector('.spam-probability')) return;
+function insertSpamInfoPill(commentElement, isSpam) {
+    if (commentElement.querySelector('.spam-info')) return;
 
-    const spamProbEl = document.createElement('span');
-    spamProbEl.className = 'spam-probability';
-    spamProbEl.textContent = `Spam Probability: ${(probability * 100).toFixed(2)}%`;
-    spamProbEl.style.cssText = `
+    const spamInfoEl = document.createElement('span');
+    spamInfoEl.className = 'spam-info';
+    spamInfoEl.textContent = isSpam ? 'Potentially Spam' : 'Not Spam';
+    spamInfoEl.style.cssText = `
         display: inline-block;
         margin-left: 10px;
         padding: 2px 5px;
@@ -25,28 +53,30 @@ function insertSpamInfoPill(commentElement, probability) {
         font-size: 12px;
         font-weight: bold;
         color: white;
-        background-color: ${probability > 0.5 ? 'red' : 'green'};
+        background-color: ${isSpam ? 'red' : 'gray'};
     `;
     const headerAuthor = commentElement.querySelector('#header-author');
     if (headerAuthor) {
-        headerAuthor.appendChild(spamProbEl);
+        headerAuthor.appendChild(spamInfoEl);
     }
 }
 
 /**
- * Processes all comments on the page, adding spam probability indicators.
+ * Processes all comments on the page, adding spam classification indicators.
  */
-function processComments() {
+async function processComments() {
     const comments = document.querySelectorAll('ytd-comment-thread-renderer');
     console.log(`Processing ${comments.length} comments`);
-    comments.forEach((comment, index) => {
+    for (let index = 0; index < comments.length; index++) {
+        const comment = comments[index];
         const contentText = comment.querySelector('#content-text');
-        if (contentText && !comment.querySelector('.spam-probability')) {
-            const probability = getRandomSpamProbability();
-            insertSpamInfoPill(comment, probability);
+        if (contentText && !comment.querySelector('.spam-info')) {
+            const commentBody = contentText.textContent;
+            const isSpam = await getSpamClassification(commentBody);
+            insertSpamInfoPill(comment, isSpam);
             console.log(`Processed comment ${index + 1}`);
         }
-    });
+    }
 }
 
 /**
