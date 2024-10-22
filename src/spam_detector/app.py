@@ -25,13 +25,13 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-APP_VERSION = "0.0.2"
+APP_VERSION = "0.1.0"
 
 
 @app.get("/v1/health", response_model=HealthResponse)
