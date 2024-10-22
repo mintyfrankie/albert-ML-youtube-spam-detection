@@ -1,10 +1,17 @@
-// Function to generate a random spam probability
+/**
+ * Generates a random spam probability.
+ * @returns {number} A random number between 0 and 1.
+ */
 function getRandomSpamProbability() {
     return Math.random();
 }
 
-// Function to create and insert the spam probability element
-function insertSpamProbability(commentElement, probability) {
+/**
+ * Creates and inserts a spam info pill element into a comment.
+ * @param {HTMLElement} commentElement - The comment element to insert the pill into.
+ * @param {number} probability - The spam probability value.
+ */
+function insertSpamInfoPill(commentElement, probability) {
     if (commentElement.querySelector('.spam-probability')) return;
 
     const spamProbEl = document.createElement('span');
@@ -26,7 +33,9 @@ function insertSpamProbability(commentElement, probability) {
     }
 }
 
-// Function to process comments
+/**
+ * Processes all comments on the page, adding spam probability indicators.
+ */
 function processComments() {
     const comments = document.querySelectorAll('ytd-comment-thread-renderer');
     console.log(`Processing ${comments.length} comments`);
@@ -34,13 +43,15 @@ function processComments() {
         const contentText = comment.querySelector('#content-text');
         if (contentText && !comment.querySelector('.spam-probability')) {
             const probability = getRandomSpamProbability();
-            insertSpamProbability(comment, probability);
+            insertSpamInfoPill(comment, probability);
             console.log(`Processed comment ${index + 1}`);
         }
     });
 }
 
-// Function to check for comments and set up observers
+/**
+ * Sets up an observer for the comments section and processes existing comments.
+ */
 function setupCommentObserver() {
     const commentsSection = document.querySelector('ytd-comments');
     if (commentsSection) {
@@ -64,7 +75,9 @@ function setupCommentObserver() {
     }
 }
 
-// Function to handle page navigation
+/**
+ * Handles page navigation by re-initializing the comment observer when the URL changes.
+ */
 function handlePageNavigation() {
     let lastUrl = location.href;
     new MutationObserver(() => {
