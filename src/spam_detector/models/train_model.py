@@ -2,16 +2,22 @@
 Train a model to detect spam emails.
 """
 
+from os import getenv
 from pathlib import Path
 from typing import TypedDict
 
+import mlflow
 import pandas as pd
 import xgboost as xgb
+from dotenv import load_dotenv
 from joblib import dump
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
+load_dotenv()
+
+EXPERIMENT_NAME = getenv("MLFLOW_EXPRIMENT_NAME_PRODUCTION")
 DATA_DIR = Path(__file__).parent / "data"
 DUMP_DIR = Path(__file__).parent
 
@@ -53,6 +59,18 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 
+mlflow.login(interactive=False)
+mlflow.set_tracking_uri("databricks")
+mlflow.set_experiment(f"/{EXPERIMENT_NAME}")
+
+mlflow.autolog(
+    log_input_examples=True,
+    log_model_signatures=True,
+    log_models=True,
+    log_datasets=True,
+)
+
+
 class XGBParams(TypedDict):
     objective: str
     max_depth: int
@@ -67,18 +85,14 @@ XGB_PARAMS: XGBParams = {
     "eval_metric": "logloss",
 }
 
-
-pipeline = Pipeline(
-    [
-        ("vectorizer", TfidfVectorizer()),
-        ("model", xgb.XGBClassifier(**XGB_PARAMS)),
-    ]
-)
-
-pipeline.fit(X_train, y_train)
-
-# TODO: determine threshold
-# TODO: implement mlflow
+with mlflow.start_run():
+    pipeline = Pipeline(
+        [
+            ("vectorizer", TfidfVectorizer()),
+            ("model", xgb.XGBClassifier(**XGB_PARAMS)),
+        ]
+    )
+    pipeline.fit(X_train, y_train)
 
 
 dump(pipeline, DUMP_DIR / "model.joblib")
