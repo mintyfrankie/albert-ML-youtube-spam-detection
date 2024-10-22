@@ -4,9 +4,7 @@
  * @returns {Promise<boolean>} A promise that resolves to true if classified as spam, false otherwise.
  */
 async function getSpamClassification(commentBody) {
-    const endpoint = 'http://localhost:8000/v1/detect'; 
-    // const endpoint = 'https://stormy-lowlands-61087-f9957486f73b.herokuapp.com/v1/detect'; 
-    // TODO: change this to the actual endpoint
+    const endpoint = 'https://stormy-lowlands-61087-f9957486f73b.herokuapp.com/v1/detect'; 
 
     try {
         const response = await fetch(endpoint, {
