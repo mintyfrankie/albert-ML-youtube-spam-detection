@@ -6,6 +6,7 @@ from typing import List
 from uuid import UUID
 
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 
 from spam_detector.interfaces import (
     DetectRequestPayload,
@@ -16,6 +17,15 @@ from spam_detector.interfaces import (
 from spam_detector.services import detect_spam, get_youtube_comments
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 APP_VERSION = "0.0.2"
 
