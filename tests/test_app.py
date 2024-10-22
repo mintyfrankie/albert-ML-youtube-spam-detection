@@ -3,13 +3,13 @@ Test cases for the FastAPI application in app.py.
 """
 
 from typing import TYPE_CHECKING
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import pytest
 from fastapi.testclient import TestClient
 
 from spam_detector.app import app
-from spam_detector.interfaces import DetectRequestPayload, DetectResponse, VideoResponse
+from spam_detector.interfaces import DetectRequestPayload
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
