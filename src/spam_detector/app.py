@@ -3,7 +3,6 @@ The entrypoint for the FastAPI application.
 """
 
 from pathlib import Path
-from typing import List
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Query
@@ -97,7 +96,7 @@ async def process_page(
     """
     try:
         comments = await get_youtube_comments(video_id, max_results)
-        results: List[DetectResponse] = []
+        results: list[DetectResponse] = []
 
         for comment in comments:
             uuid = uuid4()
