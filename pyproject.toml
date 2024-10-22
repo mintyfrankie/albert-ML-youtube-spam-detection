@@ -11,6 +11,7 @@ dependencies = [
     "fastapi[cors]>=0.115.2",
     "requests>=2.32.3",
     "aiohttp>=3.10.10",
+    "xgboost>=2.1.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
