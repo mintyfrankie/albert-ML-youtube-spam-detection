@@ -3,7 +3,6 @@ Contains the interfaces for API requests and responses.
 """
 
 from typing import List
-
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -31,6 +30,7 @@ class DetectResponse(BaseModel):
 
     class Config:
         json_encoders = {UUID: str}
+
 
 class VideoRequestPayload(BaseModel):
     """Request model for video comment processing."""
