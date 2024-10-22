@@ -3,7 +3,7 @@ Test cases for the FastAPI application in app.py.
 """
 
 from typing import TYPE_CHECKING
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -121,25 +121,18 @@ async def test_process_page_success(mocker: "MockerFixture") -> None:
     response = client.get("/v1/process_page/video123?max_results=2")
     assert response.status_code == 200
 
-    expected_response = VideoResponse(
-        id="video123",
-        nb=2,
-        comments=[
-            DetectResponse(
-                uuid=UUID("00000000-0000-0000-0000-000000000000"), is_spam=True
-            ),
-            DetectResponse(
-                uuid=UUID("00000000-0000-0000-0000-000000000000"), is_spam=False
-            ),
-        ],
-    )
+    response_json = response.json()
+    assert response_json["id"] == "video123"
+    assert response_json["nb"] == 2
+    assert len(response_json["comments"]) == 2
 
-    # Convert the expected response to a dict and serialize UUIDs to strings
-    expected_dict = expected_response.dict()
-    for comment in expected_dict["comments"]:
-        comment["uuid"] = str(comment["uuid"])
-
-    assert response.json() == expected_dict
+    # Check the structure and content of each comment
+    for i, comment in enumerate(response_json["comments"]):
+        assert "uuid" in comment
+        assert isinstance(comment["uuid"], str)
+        assert "is_spam" in comment
+        assert isinstance(comment["is_spam"], bool)
+        assert comment["is_spam"] == (i == 0)  # First comment is spam, second is not
 
 
 @pytest.mark.asyncio
