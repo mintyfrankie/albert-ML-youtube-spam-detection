@@ -96,3 +96,4 @@ with mlflow.start_run():
 
 
 dump(pipeline, DUMP_DIR / "model.joblib")
+# TODO: add model metrics to `/out/scores.txt`
