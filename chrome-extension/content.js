@@ -60,44 +60,41 @@ function insertSpamInfoPill(commentElement, isSpam) {
 }
 
 /**
- * Processes new comments on the page, adding spam classification indicators.
- * @param {NodeList} comments - The list of new comment elements to process.
+ * Processes all comments on the page, adding spam classification indicators.
  */
-async function processNewComments(comments) {
-    console.log(`Processing ${comments.length} new comments`);
-    for (const comment of comments) {
+async function processComments() {
+    const comments = document.querySelectorAll('ytd-comment-thread-renderer');
+    console.log(`Processing ${comments.length} comments`);
+    for (let index = 0; index < comments.length; index++) {
+        const comment = comments[index];
         const contentText = comment.querySelector('#content-text');
         if (contentText && !comment.querySelector('.spam-info')) {
             const commentBody = contentText.textContent;
             const isSpam = await getSpamClassification(commentBody);
             insertSpamInfoPill(comment, isSpam);
+            console.log(`Processed comment ${index + 1}`);
         }
     }
 }
 
 /**
- * Sets up an observer for the comments section and processes new comments.
+ * Sets up an observer for the comments section and processes existing comments.
  */
 function setupCommentObserver() {
     const commentsSection = document.querySelector('ytd-comments');
     if (commentsSection) {
         console.log("Comments section found, setting up observer...");
         
+        // Process existing comments
+        processComments();
+
         // Set up the observer for future updates
         const observer = new MutationObserver((mutations) => {
-            const newComments = [];
             mutations.forEach((mutation) => {
                 if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach((node) => {
-                        if (node.nodeType === Node.ELEMENT_NODE && node.matches('ytd-comment-thread-renderer')) {
-                            newComments.push(node);
-                        }
-                    });
+                    processComments();
                 }
             });
-            if (newComments.length > 0) {
-                processNewComments(newComments);
-            }
         });
         observer.observe(commentsSection, { childList: true, subtree: true });
     } else {
@@ -127,3 +124,5 @@ console.log("YouTube Comment Spam Detector script loaded");
 // Initial setup
 setupCommentObserver();
 handlePageNavigation();
+// Periodically check for new comments
+setInterval(processComments, 5000);
