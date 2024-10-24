@@ -41,7 +41,7 @@ Yunan WANG
 ### Label Distribution
 
 - Analyze distribution of spam vs. non-spam comments.
-![bg height:14cm right:40%](./Screenshots/labelled%20distrib.png)
+![bg height:14cm right:40%](./assets/labelled%20distrib.png)
 
 ---
 ## **Exploratory Data Analysis (EDA)**
