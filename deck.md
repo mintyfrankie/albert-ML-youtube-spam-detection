@@ -38,20 +38,17 @@ Yunan WANG
 ---
 
 ## **Exploratory Data Analysis (EDA)**
-### **Label Distribution**
+### Label Distribution
 
 - Analyze distribution of spam vs. non-spam comments.
-![bg height:14cm right:40%](./assets/labelled%20distrib.png)
-
-
+![bg height:14cm right:40%](./Screenshots/labelled%20distrib.png)
 
 ---
 ## **Exploratory Data Analysis (EDA)**
-### **Word Cloud**
+### Word Cloud
 
 - Visualizing common words in spam comments
 ![height:12cm](./assets/wordcloud.png)
-
 ---
 ## **Data Preprocessing**
 - Data cleaning steps:
@@ -78,7 +75,14 @@ Yunan WANG
 - Compared performance across models.
 
 ---
+## **Models tried**
 
+| Metrics   | Log Reg   | Naive Bayes   | XGBoost   |
+|------------|------------|------------|------------|
+| **Accuracy** | 0.90 | 0.78 | 0.90|
+|**F1-Score** | 0.89 | 0.73 | 0.89 |
+| **ROC-AUC** | 0.95 | 0.90 | 0.96 |
+---
 ## **Best Model : XGBoost**
 - Best performance observed with XGBoost. 
 - TF-IDF vectorization + hyperparameter tuning.
