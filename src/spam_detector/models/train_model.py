@@ -58,17 +58,20 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=13
 )
 
+try:
+    mlflow.login(interactive=False)
+    mlflow.set_tracking_uri("databricks")
+    mlflow.set_experiment(f"/{EXPERIMENT_NAME}")
 
-mlflow.login(interactive=False)
-mlflow.set_tracking_uri("databricks")
-mlflow.set_experiment(f"/{EXPERIMENT_NAME}")
-
-mlflow.autolog(
-    log_input_examples=True,
-    log_model_signatures=True,
-    log_models=True,
-    log_datasets=True,
-)
+    mlflow.autolog(
+        log_input_examples=True,
+        log_model_signatures=True,
+        log_models=True,
+        log_datasets=True,
+    )
+except Exception as e:
+    print(f"Error logging to MLflow: {e}")
+    pass
 
 
 class XGBParams(TypedDict):
