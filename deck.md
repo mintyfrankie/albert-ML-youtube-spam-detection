@@ -3,6 +3,12 @@ marp: true
 theme: default
 _class: lead
 paginate: true
+style: |
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
 ---
 
 # **ML For Business II Final Project**
@@ -101,13 +107,49 @@ Yunan WANG
 
 ---
 
-# Live demo time!
+## **DevOps Structure: Chrome Extension** 
+
+Frontend PoC with Chrome Extension
+
+- Connect to backend API server deployed on Heroku.
+- Dynamically insert a pill into the comment section to indicate the spam probability.
+
 
 ---
 
-## **DevOps Structure**
+## **DevOps Structure: Testing**
 
+Unit testing with pytest on API server, covering all the endpoints and edge cases; For example: 
 
+- requests with empty content;
+- malformed requests;
+- internal server errors (model loading failure, etc.)
+
+---
+
+## **DevOps Structure: CI/CD**
+
+Main tool: GitHub Actions
+
+- Code quality check on commits & PRs (format, linting, unit testing)
+- Build Docker image and push to GitHub Container Registry
+- Deploy to Heroku worker
+- Compile this Marp deck and publish to GitHub Pages
+
+![bg height:11cm right:50% ](./assets/workflows.png)
+
+---
+
+## **DevOps Structure: Experiment Tracking**
+
+- MLFlow for experiment tracking on Databricks
+  - Two environments: staging and production
+  - Log parameters, metrics, and model artifacts.
+- Leverage `mlflow.autolog()` to automatically log parameters, metrics, and model artifacts.
+
+---
+
+# Live demo time!
 
 ---
 
