@@ -52,9 +52,10 @@ We iterated on our baseline model by:
    - n estimators = 150
 
 The final XGBoost model achieved significant improvements:
-- Accuracy on test set: 0.95
-- F1 Score: 0.95
-- ROC-AUC: 0.98
+- F1 Score (using threshold 0.65): 0.8656
+- ROC-AUC Score: 0.9570
+- Train Accuracy: 0.9502
+- Test Accuracy (using threshold 0.65): 0.9047
 
 ## 5. Proposed Solution and Methodologies
 

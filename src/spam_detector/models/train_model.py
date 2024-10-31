@@ -69,9 +69,8 @@ try:
         log_models=True,
         log_datasets=True,
     )
-except Exception as e:
-    print(f"Error logging to MLflow: {e}")
-    pass
+except Exception:
+    print("Error logging to MLflow, training model without logging.")
 
 
 class XGBParams(TypedDict):
@@ -88,15 +87,24 @@ XGB_PARAMS: XGBParams = {
     "eval_metric": "logloss",
 }
 
-with mlflow.start_run():
-    pipeline = Pipeline(
-        [
-            ("vectorizer", TfidfVectorizer()),
-            ("model", xgb.XGBClassifier(**XGB_PARAMS)),
-        ]
-    )
+
+pipeline = Pipeline(
+    [
+        ("vectorizer", TfidfVectorizer()),
+        ("model", xgb.XGBClassifier(**XGB_PARAMS)),
+    ]
+)
+
+try:
+    with mlflow.start_run():
+        pipeline.fit(X_train, y_train)
+except Exception:
+    print("Error integrating MLflow autologging, training model without logging.")
     pipeline.fit(X_train, y_train)
 
-
 dump(pipeline, DUMP_DIR / "model.joblib")
+
 # TODO: add model metrics to `/out/scores.txt`
+# accuracy
+# f1-score
+# roc-auc
